@@ -1,5 +1,10 @@
 # FlatCAM
+## Installing Tools Database
+* First download the [Tools_Data_Base.TXT](../FlatCam_Tools_Database/Tools_Data_Base.TXT) file by clicking the link and click download raw file. 
 
+* Under the "Options" tab or use the "Ctrl + D" shortcut or go  to open the Tools Database. You may create a new tool here, but it is recommended to import the database provided in this repository. Select "Import DB" and select the [Tools_Data_Base.TXT](../FlatCam_Tools_Database/Tools_Data_Base.TXT) file to import the tools database.
+
+## Opening Gerber and Excellon Files
 * In FlatCAM, open the Gerber and the Excellon files to add them to the FlatCAM project.
 
 <p align="center">
@@ -12,23 +17,27 @@
   <img src="./images/flatcam_opened.png" width="350" title="FlatCAM Opened Objects">
 </p>
 
-## Generating Trace GCode
+## Generating Isolation Routing GCode with an End-Mill
 
-* Double-click the Gerber in the project tree side panel, then select "Isolation Routing".
+* Double-click the Gerber object in the project tree side panel, then select "Isolation Routing".
 
 <p align="center">
-  <img src="./images/flatcam_project_sidepanel.png" width="350" title="FlatCAM Side Panel">
+  <img src="./images/flatcam_isolation_location.png" width="350" title="FlatCAM Isolation">
 </p>
 
-* Right click the #1 tool in the Tools Table and delete it. We must set up a new tool to mill at the 0.1mm depth of cut using the lab's V-cutter bits.
+* Right click the #1 tool in the Tools Table and delete it. We will be using a tool from the tools database.
 
-* Use the "Ctrl + D" shortcut to open the Tools Database. You may create a new tool here, but it is recommended to import the database provided in this repository. Select "Import DB" and select the [Tools_Data_Base.TXT](../FlatCam_Tools_Database/Tools_Data_Base.TXT) file to import the V-cutter tool.
+<p align="center">
+  <img src="./images/FlatCAM_isolation_geometry.png" width="350" title="FlatCAM Preprocessor">
+</p>
 
-* Select "Pick from DB" in the sidebar, select the "V-Cutter" tool, and select "Transfer the Tool" to apply to the Isolation Tool operation.
+* Select "Pick from DB" in the sidebar, select the "End-Mill_0.3mm" or "End-Mill_0.4mm" tool, depending on clearances the PCB was designed with. Next select "Transfer the Tool" to apply to the Isolation Tool operation.
 
-* Change "Tool Dia." to match the 0.0354 diameter, and select "Generate Geometry".
+* Then click "Generate Geometry"
 
-* Change the Preprocessor to 'grbl_11_no_M6', followed by "Generate CNCJob Object".
+* In "Common Parameters" change the End move X,Y to 0,0
+
+* Then change the Preprocessor to "GRBL_11_no_M6", followed by "Generate CNCJob Object".
 
 <p align="center">
   <img src="./images/FlatCAM_preproc.png" width="350" title="FlatCAM Preprocessor">
@@ -36,30 +45,37 @@
 
 * The contour job is complete, select "Save CNC Code" or right click the CNC Job in the project tree side panel to save the Gcode for access with Candle later.
 
-## Generating Drill GCode
+## Generating Drill GCode using Milling Option
 
-* The drill job can now be created. This operation may vary depending on your requirements. For example, the provided design uses two different size vias, and these can either be combined to one size or retained as two different drill operations. Depending on drill bit availability and prototyping requirements, you may opt to simplify this operation to use the smallest size drill, otherwise it is recommended to use the Tool Change option to provide for drill changing.
+* The drill job can now be created. This operation may vary depending on your requirements. For example, the provided design uses two different size vias, and these can either be combined into one or retained as two different drill operations. Depending on drill bit availability and prototyping requirements, you may opt to simplify this operation to use the smallest size drill, otherwise it is recommended to use the Tool Change option to provide for drill changing.
 
-* Double click the Excellon drill file in the project tree side panel, and select "Excellon Editor" to make changes to the drills this operation will apply to. For example, edit all sizes to the same value to combine drills.
+* Double click the Excellon drill file in the project tree side panel, and select all the holes to drill in this operation. For example, all the holes will be in the same drill operation. 
 
 <p align="center">
   <img src="./images/flatcam_select_excellon.png" width="350" title="FlatCAM Excellon in Side Panel">
 </p>
 
 <p align="center">
-  <img src="./images/flatcam_excellon_editor.png" width="350" title="FlatCAM Excellon Editor">
+  <img src="./images/flatcam_excellon_select_all.png" width="350" title="FlatCAM Excellon Editor">
 </p>
 
-* Exit the editor and save changes. Select "Drilling Tool" and edit parameters accordingly. Since this is a separate operation from the contour, it will be critical that the CNC machine retains its positioning to ensure alignment. Keep this in mind when setting parameters for tool changes, if this option is selected.
+* Then select the "UTILITES" button, then change the Milling Diameter to 0.5 and click the "Mill Drills"
 
-* It is recommended to reduce Feedrate Z to 60 (300 may be too high and could cause damage to the board). Adjust Cut Z to a value that will completely drill through the board. If using the provided fixture, there will be ample clearance under the board.
-
-* Select "Generate CNCJob Object" and save in the same manner as the contour operation.
+* Adjust Cut Z to a value of -2.5mm. Check "Multi-Depth" and change it to 0.5mm. It is recommended to reduce Feedrate X-Y to 60 (120 may be too high and could cause damage to the end mill). If using the provided fixture, there will be ample clearance under the board.
 
 <p align="center">
-  <img src="./images/flatcam_gcode_objs.png" width="350" title="FlatCAM CNC Jobs">
+  <img src="./images/flatcam_excellon_parameters.png" width="350" title="FlatCAM Excellon Editor">
 </p>
 
-These Gcode files may be opened directly in Candle for heightmap generation and running the machine.
+* In the "Common Parameters" section, change "End Move X,Y" to 0,0. Then change the "Preprocessor" to "GRBL_11_no_M6" and go back up to the "Parameters" section and re-select the "Multi-Depth" setting.
+
+<p align="center">
+  <img src="./images/flatcam_excellon_preproc.png" width="350" title="FlatCAM Excellon Editor">
+</p>
+
+* Select "Generate CNCJob Object" and save in the same manner as the contour operation. 
+
+
+These G-code files may be opened directly in Candle for heightmap generation and running of the machine.
 
 Next Tutorial: [Using Candle](./using_Candle.md)
